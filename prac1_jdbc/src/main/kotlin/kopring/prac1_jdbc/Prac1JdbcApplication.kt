@@ -1,11 +1,11 @@
-package kopring.kopring_study_db
+package kopring.prac1_jdbc
 
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class KopringStudyDbApplication
+class Prac1JdbcApplication
 
 fun main(args: Array<String>) {
-    runApplication<KopringStudyDbApplication>(*args)
+    runApplication<Prac1JdbcApplication>(*args)
 }

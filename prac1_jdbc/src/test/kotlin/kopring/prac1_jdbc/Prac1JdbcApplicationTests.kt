@@ -1,10 +1,10 @@
-package kopring.kopring_study_db
+package kopring.prac1_jdbc
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class KopringStudyDbApplicationTests {
+class Prac1JdbcApplicationTests {
 
     @Test
     fun contextLoads() {
