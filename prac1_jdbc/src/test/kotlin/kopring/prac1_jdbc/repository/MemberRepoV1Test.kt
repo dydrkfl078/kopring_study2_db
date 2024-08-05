@@ -2,6 +2,7 @@ package kopring.prac1_jdbc.repository
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.kotest.matchers.equals.shouldBeEqual
+import io.kotest.matchers.shouldBe
 import kopring.prac1_jdbc.domain.Member
 import org.junit.jupiter.api.Test
 
@@ -17,7 +18,7 @@ class MemberRepoV1Test {
     fun crud() {
 
         // create
-        val member = Member("member_C", 20000)
+        val member = Member("member_E", 20000)
         memberRepo.save(member)
 
         // read
@@ -25,5 +26,11 @@ class MemberRepoV1Test {
         logger.info { "findMember = $findMember"}
 
         member shouldBeEqual findMember
+
+        // update
+        memberRepo.update(member.memberId,50000)
+        val updateMember = memberRepo.findById(member.memberId)
+
+        updateMember.money shouldBe 50000
     }
 }

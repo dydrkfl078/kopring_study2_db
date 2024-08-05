@@ -60,6 +60,25 @@ class MemberRepoV1 {
         }
     }
 
+    fun update(memberId : String, money : Int) {
+        val sql = "UPDATE member SET money = ? WHERE member_id = ?"
+
+        try {
+            con = getConnection()
+            pstmt = con.prepareStatement(sql)
+            pstmt.setInt(1, money)
+            pstmt.setString(2, memberId)
+            val resultSize = pstmt.executeUpdate()
+            logger.info { "update result $resultSize" }
+
+        } catch (e: SQLException) {
+            logger.info { "update exception : $e" }
+            throw e
+        } finally {
+            connectionClose()
+        }
+    }
+
     private fun connectionClose() {
 
         pstmt.let {
