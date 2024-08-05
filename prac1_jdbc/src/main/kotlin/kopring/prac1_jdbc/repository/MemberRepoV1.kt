@@ -50,7 +50,7 @@ class MemberRepoV1 {
                 val member = Member(rs.getString("member_id"),rs.getInt("money"))
                 return member
             } else {
-                throw NoSuchFieldException("member_id not found = $memberId")
+                throw NoSuchElementException("member_id not found = $memberId")
             }
         } catch (e: SQLException) {
             logger.info { "findById exception : $e" }
@@ -74,6 +74,21 @@ class MemberRepoV1 {
         } catch (e: SQLException) {
             logger.info { "update exception : $e" }
             throw e
+        } finally {
+            connectionClose()
+        }
+    }
+
+    fun delete(memberId : String){
+        val sql = "DELETE FROM member WHERE member_id = ?"
+
+        try {
+            con = getConnection()
+            pstmt = con.prepareStatement(sql)
+            pstmt.setString(1, memberId)
+            pstmt.executeUpdate()
+        } catch (e: SQLException) {
+            logger.info { "delete exception : $e" }
         } finally {
             connectionClose()
         }
