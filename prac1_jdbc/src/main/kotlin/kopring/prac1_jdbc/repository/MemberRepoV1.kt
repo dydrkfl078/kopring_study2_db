@@ -5,6 +5,7 @@ import kopring.prac1_jdbc.connection.DBConnectionUtils
 import kopring.prac1_jdbc.domain.Member
 import java.sql.Connection
 import java.sql.PreparedStatement
+import java.sql.ResultSet
 import java.sql.SQLException
 
 private val logger = KotlinLogging.logger {  }
@@ -15,6 +16,7 @@ class MemberRepoV1 {
 
     private lateinit var con : Connection
     private lateinit var pstmt : PreparedStatement
+    private lateinit var rs : ResultSet
 
     fun save(member: Member): Member {
         val sql = "INSERT INTO member(member_id, money) VALUES (?, ?)"
@@ -35,6 +37,29 @@ class MemberRepoV1 {
         }
     }
 
+    fun findById(memberId : String): Member {
+        val sql = "SELECT * FROM member WHERE member_id = ?"
+
+        try {
+            con = getConnection()
+            pstmt = con.prepareStatement(sql)
+            pstmt.setString(1, memberId)
+
+            rs = pstmt.executeQuery()
+            if (rs.next()) {
+                val member = Member(rs.getString("member_id"),rs.getInt("money"))
+                return member
+            } else {
+                throw NoSuchFieldException("member_id not found = $memberId")
+            }
+        } catch (e: SQLException) {
+            logger.info { "findById exception : $e" }
+            throw e
+        } finally {
+            connectionClose()
+        }
+    }
+
     private fun connectionClose() {
 
         pstmt.let {
@@ -48,6 +73,14 @@ class MemberRepoV1 {
         con.let {
             try {
                 con.close()
+            } catch (e: SQLException) {
+                logger.info { "error $e" }
+            }
+        }
+
+        if (::rs.isInitialized) {
+            try {
+                rs.close()
             } catch (e: SQLException) {
                 logger.info { "error $e" }
             }
