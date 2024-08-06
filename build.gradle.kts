@@ -44,6 +44,10 @@ subprojects {
         implementation("io.kotest.extensions:kotest-extensions-spring:1.1.3")
         implementation("io.github.oshai:kotlin-logging-jvm:5.1.1")
         runtimeOnly("com.h2database:h2")
+
+        // JDBC
+        implementation("org.springframework.boot:spring-boot-starter-jdbc")
+        implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
     }
 
     tasks {
