@@ -1,18 +1,18 @@
 package kopring.prac1_jdbc.repository
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kopring.prac1_jdbc.connection.DBConnectionUtils
 import kopring.prac1_jdbc.domain.Member
+import org.springframework.jdbc.support.JdbcUtils
 import java.sql.Connection
 import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
+import java.sql.Statement
+import javax.sql.DataSource
 
 private val logger = KotlinLogging.logger {  }
 
-// JDBC - DriverManager 사용해보기
-
-class MemberRepoV1 {
+class MemberRepoV1(private val dataSource : DataSource) {
 
     private lateinit var con : Connection
     private lateinit var pstmt : PreparedStatement
@@ -33,7 +33,7 @@ class MemberRepoV1 {
             logger.info { "save exception : $e" }
             throw e
         } finally {
-            connectionClose()
+            connectionClose(con,pstmt)
         }
     }
 
@@ -47,7 +47,7 @@ class MemberRepoV1 {
 
             rs = pstmt.executeQuery()
             if (rs.next()) {
-                val member = Member(rs.getString("member_id"),rs.getInt("money"))
+                val member = Member(rs.getString("member_id"), rs.getInt("money"))
                 return member
             } else {
                 throw NoSuchElementException("member_id not found = $memberId")
@@ -56,7 +56,7 @@ class MemberRepoV1 {
             logger.info { "findById exception : $e" }
             throw e
         } finally {
-            connectionClose()
+            connectionClose(con,pstmt)
         }
     }
 
@@ -75,7 +75,7 @@ class MemberRepoV1 {
             logger.info { "update exception : $e" }
             throw e
         } finally {
-            connectionClose()
+            connectionClose(con,pstmt)
         }
     }
 
@@ -90,36 +90,28 @@ class MemberRepoV1 {
         } catch (e: SQLException) {
             logger.info { "delete exception : $e" }
         } finally {
-            connectionClose()
+            connectionClose(con,pstmt)
         }
     }
 
-    private fun connectionClose() {
-
-        pstmt.let {
-            try {
-                pstmt.close()
-            } catch (e: SQLException) {
-                logger.info { "error $e" }
-            }
-        }
-
-        con.let {
-            try {
-                con.close()
-            } catch (e: SQLException) {
-                logger.info { "error $e" }
-            }
-        }
+    private fun connectionClose(con : Connection, stmt : Statement) {
 
         if (::rs.isInitialized) {
             try {
-                rs.close()
-            } catch (e: SQLException) {
-                logger.info { "error $e" }
+                rs.close();
+            } catch (e : SQLException) {
+                logger.info { "Could not close JDBC ResultSet = $e "}
+            } catch (ex : Throwable) {
+                logger.info { "Unexpected exception on closing JDBC ResultSet = $ex " }
             }
         }
+        JdbcUtils.closeStatement(stmt)
+        JdbcUtils.closeConnection(con)
     }
 
-    private fun getConnection() = DBConnectionUtils.getConnection()
+    private fun getConnection(): Connection {
+        val con = dataSource.connection
+        return con
+    }
+
 }

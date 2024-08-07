@@ -1,17 +1,14 @@
 package kopring.prac1_jdbc.repository
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kopring.prac1_jdbc.connection.DBConnectionUtils
 import kopring.prac1_jdbc.domain.Member
 import org.springframework.jdbc.support.JdbcUtils
-import java.sql.Connection
-import java.sql.PreparedStatement
-import java.sql.ResultSet
-import java.sql.SQLException
-import java.sql.Statement
+import java.sql.*
 import javax.sql.DataSource
 
 private val logger = KotlinLogging.logger {  }
+
+// 트랜잭션을 유지하기 위해 Connection 을 Parameter 로 사용하는 방법.
 
 class MemberRepoV2(private val dataSource : DataSource) {
 
@@ -34,7 +31,7 @@ class MemberRepoV2(private val dataSource : DataSource) {
             logger.info { "save exception : $e" }
             throw e
         } finally {
-            connectionClose(con,pstmt)
+            allClose(con,pstmt)
         }
     }
 
@@ -57,15 +54,39 @@ class MemberRepoV2(private val dataSource : DataSource) {
             logger.info { "findById exception : $e" }
             throw e
         } finally {
-            connectionClose(con,pstmt)
+            allClose(con, pstmt)
         }
     }
 
-    fun update(memberId : String, money : Int) {
+    fun findById(con: Connection, memberId : String): Member {
+        val sql = "SELECT * FROM member WHERE member_id = ?"
+
+        try {
+
+            pstmt = con.prepareStatement(sql)
+            pstmt.setString(1, memberId)
+
+            rs = pstmt.executeQuery()
+            if (rs.next()) {
+                val member = Member(rs.getString("member_id"), rs.getInt("money"))
+                return member
+            } else {
+                throw NoSuchElementException("member_id not found = $memberId")
+            }
+        } catch (e: SQLException) {
+            logger.info { "findById exception : $e" }
+            throw e
+        } finally {
+            statementClose(pstmt)
+        }
+    }
+
+
+
+    fun update(con : Connection , memberId : String, money : Int) {
         val sql = "UPDATE member SET money = ? WHERE member_id = ?"
 
         try {
-            con = getConnection()
             pstmt = con.prepareStatement(sql)
             pstmt.setInt(1, money)
             pstmt.setString(2, memberId)
@@ -76,7 +97,7 @@ class MemberRepoV2(private val dataSource : DataSource) {
             logger.info { "update exception : $e" }
             throw e
         } finally {
-            connectionClose(con,pstmt)
+            statementClose(pstmt)
         }
     }
 
@@ -91,11 +112,22 @@ class MemberRepoV2(private val dataSource : DataSource) {
         } catch (e: SQLException) {
             logger.info { "delete exception : $e" }
         } finally {
-            connectionClose(con,pstmt)
+            allClose(con,pstmt)
         }
     }
 
-    private fun connectionClose(con : Connection, stmt : Statement) {
+    private fun allClose(con : Connection, stmt : Statement) {
+        rsClose()
+        JdbcUtils.closeStatement(stmt)
+        JdbcUtils.closeConnection(con)
+    }
+
+    private fun statementClose(stmt: Statement) {
+        rsClose()
+        JdbcUtils.closeStatement(stmt)
+    }
+
+    private fun rsClose(){
 
         if (::rs.isInitialized) {
             try {
@@ -106,8 +138,6 @@ class MemberRepoV2(private val dataSource : DataSource) {
                 logger.info { "Unexpected exception on closing JDBC ResultSet = $ex " }
             }
         }
-        JdbcUtils.closeStatement(stmt)
-        JdbcUtils.closeConnection(con)
     }
 
     private fun getConnection(): Connection {

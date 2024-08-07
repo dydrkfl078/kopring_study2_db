@@ -1,15 +1,13 @@
 package kopring.prac1_jdbc.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
-import kopring.prac1_jdbc.repository.MemberRepoV1
 import kopring.prac1_jdbc.repository.MemberRepoV2
-import kopring.prac1_jdbc.repository.MemberRepoV3
 import java.sql.Connection
 import javax.sql.DataSource
 
 private val logger = KotlinLogging.logger {  }
 
-class MemberServiceV2(private val memberRepo : MemberRepoV3, private val dataSource: DataSource) {
+class MemberServiceV2(private val memberRepo : MemberRepoV2, private val dataSource: DataSource) {
 
     fun accountTransfer(fromId : String, toId : String, money : Int) {
         val con = dataSource.connection

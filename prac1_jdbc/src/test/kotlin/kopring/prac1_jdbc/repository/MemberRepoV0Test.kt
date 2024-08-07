@@ -1,37 +1,19 @@
 package kopring.prac1_jdbc.repository
 
-import com.zaxxer.hikari.HikariDataSource
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.equals.shouldBeEqual
 import io.kotest.matchers.shouldBe
-import kopring.prac1_jdbc.connection.ConnectionConst
 import kopring.prac1_jdbc.domain.Member
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.springframework.jdbc.datasource.DriverManagerDataSource
+
 import java.util.NoSuchElementException
 
 private val logger = KotlinLogging.logger {  }
-class MemberRepoV2Test {
 
-    private lateinit var memberRepo : MemberRepoV2
+class MemberRepoV0Test {
 
-    @BeforeEach
-    fun beforeEach() {
-
-        // driverManagerDataSource 사용
-//        val dataSource = DriverManagerDataSource(ConnectionConst.URL,ConnectionConst.USERNAME,ConnectionConst.PASSWORD)
-
-        val dataSource : HikariDataSource = HikariDataSource().apply {
-            jdbcUrl = ConnectionConst.URL
-            username = ConnectionConst.USERNAME
-            password = ConnectionConst.PASSWORD
-            maximumPoolSize = 10
-            poolName = "MyPool"
-        }
-        memberRepo = MemberRepoV2(dataSource)
-    }
+    val memberRepo = MemberRepoV0()
 
     @Test
     fun crud() {

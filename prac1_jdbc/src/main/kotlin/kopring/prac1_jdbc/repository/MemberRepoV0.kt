@@ -1,14 +1,18 @@
 package kopring.prac1_jdbc.repository
 
 import io.github.oshai.kotlinlogging.KotlinLogging
+import kopring.prac1_jdbc.connection.DBConnectionUtils
 import kopring.prac1_jdbc.domain.Member
-import org.springframework.jdbc.datasource.DataSourceUtils
-import org.springframework.jdbc.support.JdbcUtils
-import java.sql.*
-import javax.sql.DataSource
+import java.sql.Connection
+import java.sql.PreparedStatement
+import java.sql.ResultSet
+import java.sql.SQLException
 
 private val logger = KotlinLogging.logger {  }
-class MemberRepoV3(private val dataSource : DataSource) {
+
+// JDBC - DriverManager 사용해보기
+
+class MemberRepoV0 {
 
     private lateinit var con : Connection
     private lateinit var pstmt : PreparedStatement
@@ -29,7 +33,7 @@ class MemberRepoV3(private val dataSource : DataSource) {
             logger.info { "save exception : $e" }
             throw e
         } finally {
-            allClose(con,pstmt)
+            connectionClose()
         }
     }
 
@@ -43,7 +47,7 @@ class MemberRepoV3(private val dataSource : DataSource) {
 
             rs = pstmt.executeQuery()
             if (rs.next()) {
-                val member = Member(rs.getString("member_id"), rs.getInt("money"))
+                val member = Member(rs.getString("member_id"),rs.getInt("money"))
                 return member
             } else {
                 throw NoSuchElementException("member_id not found = $memberId")
@@ -52,7 +56,7 @@ class MemberRepoV3(private val dataSource : DataSource) {
             logger.info { "findById exception : $e" }
             throw e
         } finally {
-            allClose(con, pstmt)
+            connectionClose()
         }
     }
 
@@ -60,6 +64,7 @@ class MemberRepoV3(private val dataSource : DataSource) {
         val sql = "UPDATE member SET money = ? WHERE member_id = ?"
 
         try {
+            con = getConnection()
             pstmt = con.prepareStatement(sql)
             pstmt.setInt(1, money)
             pstmt.setString(2, memberId)
@@ -70,7 +75,7 @@ class MemberRepoV3(private val dataSource : DataSource) {
             logger.info { "update exception : $e" }
             throw e
         } finally {
-            allClose(con, pstmt)
+            connectionClose()
         }
     }
 
@@ -85,32 +90,36 @@ class MemberRepoV3(private val dataSource : DataSource) {
         } catch (e: SQLException) {
             logger.info { "delete exception : $e" }
         } finally {
-            allClose(con,pstmt)
+            connectionClose()
         }
     }
 
-    private fun allClose(con : Connection, stmt : Statement) {
-        rsClose()
-        JdbcUtils.closeStatement(stmt)
-        DataSourceUtils.releaseConnection(con, dataSource)
-    }
+    private fun connectionClose() {
 
-    private fun rsClose(){
+        pstmt.let {
+            try {
+                pstmt.close()
+            } catch (e: SQLException) {
+                logger.info { "error $e" }
+            }
+        }
+
+        con.let {
+            try {
+                con.close()
+            } catch (e: SQLException) {
+                logger.info { "error $e" }
+            }
+        }
 
         if (::rs.isInitialized) {
             try {
-                rs.close();
-            } catch (e : SQLException) {
-                logger.info { "Could not close JDBC ResultSet = $e "}
-            } catch (ex : Throwable) {
-                logger.info { "Unexpected exception on closing JDBC ResultSet = $ex " }
+                rs.close()
+            } catch (e: SQLException) {
+                logger.info { "error $e" }
             }
         }
     }
 
-    private fun getConnection(): Connection {
-        val con = DataSourceUtils.getConnection(dataSource)
-        return con
-    }
-
+    private fun getConnection() = DBConnectionUtils.getConnection()
 }

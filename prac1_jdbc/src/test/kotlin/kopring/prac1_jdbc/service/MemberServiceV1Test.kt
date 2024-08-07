@@ -1,13 +1,11 @@
 package kopring.prac1_jdbc.service
 
-import io.github.oshai.kotlinlogging.KotlinLogging
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import kopring.prac1_jdbc.connection.ConnectionConst
 import kopring.prac1_jdbc.domain.Member
-import kopring.prac1_jdbc.repository.MemberRepoV2
+import kopring.prac1_jdbc.repository.MemberRepoV1
 import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -23,12 +21,12 @@ class MemberServiceV1Test {
         const val MEMBER_EX = "ex"
     }
 
-    private lateinit var memberRepo : MemberRepoV2
+    private lateinit var memberRepo : MemberRepoV1
     private lateinit var memberService : MemberServiceV1
 
     @BeforeEach
     fun beforeEach(){
-        memberRepo = MemberRepoV2(DriverManagerDataSource(ConnectionConst.URL,ConnectionConst.USERNAME,ConnectionConst.PASSWORD))
+        memberRepo = MemberRepoV1(DriverManagerDataSource(ConnectionConst.URL,ConnectionConst.USERNAME,ConnectionConst.PASSWORD))
         memberService = MemberServiceV1(memberRepo)
     }
 

@@ -1,19 +1,25 @@
 package kopring.prac1_jdbc.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.matchers.shouldBe
 import kopring.prac1_jdbc.connection.ConnectionConst
 import kopring.prac1_jdbc.domain.Member
 import kopring.prac1_jdbc.repository.MemberRepoV2
+import kopring.prac1_jdbc.repository.MemberRepoV3
 import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
+import org.springframework.jdbc.datasource.DataSourceTransactionManager
 import org.springframework.jdbc.datasource.DriverManagerDataSource
+import org.springframework.transaction.PlatformTransactionManager
 
-// 트랜잭션을 사용하지 않아서 생기는 오류 상황 TEST.
+private val logger = KotlinLogging.logger {  }
 
-class MemberServiceV2Test {
+// 트랜잭션 매니저 사용
+class MemberServiceV3_1Test {
 
     companion object {
         const val MEMBER_A = "memberA"
@@ -21,14 +27,15 @@ class MemberServiceV2Test {
         const val MEMBER_EX = "ex"
     }
 
-    private lateinit var memberRepo : MemberRepoV2
-    private lateinit var memberService : MemberServiceV2
+    private lateinit var memberRepo : MemberRepoV3
+    private lateinit var memberService : MemberServiceV3_1
 
     @BeforeEach
     fun beforeEach(){
-        val dataSource = DriverManagerDataSource(ConnectionConst.URL,ConnectionConst.USERNAME,ConnectionConst.PASSWORD)
-        memberRepo = MemberRepoV2(dataSource)
-        memberService = MemberServiceV2(memberRepo, dataSource)
+        val dataSource = DriverManagerDataSource(ConnectionConst.URL, ConnectionConst.USERNAME, ConnectionConst.PASSWORD)
+        memberRepo = MemberRepoV3(dataSource)
+        val transactionManager = DataSourceTransactionManager(dataSource)
+        memberService = MemberServiceV3_1(memberRepo, transactionManager)
     }
 
     @AfterEach
