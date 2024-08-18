@@ -26,7 +26,7 @@ class ItemController (private val itemService: ItemService ){
 
     @GetMapping("/{itemId}")
     fun item(@PathVariable("itemId") itemId : Long, model : Model) : String {
-        val item = model.addAttribute("item", itemService.findById(itemId))
+        val item = itemService.findById(itemId)
         model.addAttribute("item",item )
         return "item"
     }
