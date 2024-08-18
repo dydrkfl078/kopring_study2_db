@@ -9,8 +9,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
-@Import(MemoryConfig::class)
-@SpringBootApplication(scanBasePackages = ["com.example.prac4_db_application.web"])
+@SpringBootApplication
 class Prac4DbApplication {
 
 

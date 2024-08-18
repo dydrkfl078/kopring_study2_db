@@ -14,15 +14,15 @@ import org.springframework.stereotype.Component
 
 private val logger = KotlinLogging.logger {  }
 
-@Configuration
+//@Configuration
 class MemoryConfig {
 
-    @Bean
+//    @Bean
     fun itemRepository(): ItemRepository {
         return MemoryItemRepository()
     }
 
-    @Bean
+//    @Bean
     fun itemService() : ItemService {
         return ItemServiceV1(itemRepository())
     }

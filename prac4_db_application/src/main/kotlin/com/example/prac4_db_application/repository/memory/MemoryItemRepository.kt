@@ -9,7 +9,7 @@ import org.springframework.util.ObjectUtils
 import java.util.stream.Collectors
 
 
-@Repository
+//@Repository
 class MemoryItemRepository : ItemRepository {
 
     companion object {
@@ -25,15 +25,13 @@ class MemoryItemRepository : ItemRepository {
     }
 
     override fun update(itemId: Long, updateDto: ItemUpdateDto) {
-        val findItem = findById(itemId)?.let {
+        findById(itemId)?.let {
             it.apply {
                 itemName = updateDto.itemName
                 price = updateDto.price
                 quantity = updateDto.quantity
             }
         } ?: throw NoSuchElementException("Item with id $itemId not found")
-
-        store[itemId] = findItem
     }
 
     override fun findById(id: Long): Item? {
