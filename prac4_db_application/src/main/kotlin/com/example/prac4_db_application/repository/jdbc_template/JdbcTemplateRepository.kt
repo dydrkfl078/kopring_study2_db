@@ -8,9 +8,13 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
+import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
+import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
 import org.springframework.jdbc.support.KeyHolder
 import org.springframework.stereotype.Repository
+import java.util.Objects
 import javax.sql.DataSource
 
 private val logger = KotlinLogging.logger {  }
@@ -18,41 +22,35 @@ private val logger = KotlinLogging.logger {  }
 @Repository
 class JdbcTemplateRepository (private val dataSource : DataSource): ItemRepository {
 
-    private val template = JdbcTemplate(dataSource)
+    private val template = NamedParameterJdbcTemplate(dataSource)
 
     override fun save(item: Item): Item {
         logger.info { "jdbcTemplate save!" }
-        val sql = "INSERT INTO item(item_name, price, quantity) VALUES (?, ?, ?)"
+        val sql = "INSERT INTO item(item_name, price, quantity) VALUES (:itemName, :price, :quantity)"
         val keyHolder = GeneratedKeyHolder()
-
-        template.update ({ con ->
-            val ps = con.prepareStatement(sql, arrayOf("id"))
-                .apply {
-                    setString(1,item.itemName)
-                    setInt(2,item.price)
-                    setInt(3, item.quantity)
-                }
-            return@update ps
-        },keyHolder )
+        val param = BeanPropertySqlParameterSource(item)
+        template.update (sql, param, keyHolder )
 
         item.id = keyHolder.key?.toLong()
         return item
     }
 
     override fun update(itemId: Long, updateDto: ItemUpdateDto) {
-        val sql = "UPDATE item SET item_name = ?, price = ?, quantity = ? WHERE id = ?"
-
-        template.update(sql,
-            updateDto.itemName,
-            updateDto.price,
-            updateDto.quantity,
-            itemId)
+        val sql = "UPDATE item SET item_name = :itemName, price = :price, quantity = :quantity WHERE id = :id"
+        val param = MapSqlParameterSource().apply {
+            addValue("itemName", updateDto.itemName)
+            addValue("price", updateDto.price)
+            addValue("quantity", updateDto.quantity)
+            addValue("id", itemId)
+        }
+        template.update(sql, param)
     }
 
     override fun findById(id: Long): Item? {
-        val sql = "SELECT * FROM item WHERE id = ?"
+        val sql = "SELECT * FROM item WHERE id = :id"
         try {
-            val item = template.queryForObject(sql, rowMapper(), id )
+            val param = mapOf("id" to id)
+            val item = template.queryForObject(sql, param, rowMapper() )
 
             return item
         } catch (e: EmptyResultDataAccessException) {
@@ -61,13 +59,41 @@ class JdbcTemplateRepository (private val dataSource : DataSource): ItemReposito
     }
 
 
-    override fun findAll(con: ItemSearchCond): List<Item> {
-        val sql = "SELECT * FROM item"
-        try {
-            return template.query(sql, rowMapper())
-        } catch (e: EmptyResultDataAccessException) {
-            return emptyList()
+    override fun findAll(cond: ItemSearchCond): List<Item> {
+        var sql = "SELECT id, item_name, price, quantity FROM item"
+        val itemName = cond.itemName
+        val maxPrice = cond.maxPrice
+
+        if (!itemName.isNullOrBlank() || maxPrice != null ) {
+            sql +=" WHERE"
         }
+
+        var andFlag = false
+        val param = mutableListOf<Any>()
+
+        if (!itemName.isNullOrBlank()) {
+            sql += " item_name LIKE concat('%',:itemName,'%')"
+            param.add(itemName)
+            andFlag = true
+        }
+
+        if (maxPrice != null) {
+            if (andFlag) {
+                sql += " AND"
+            }
+            sql += " price <= :maxPrice"
+            param.add(maxPrice)
+        }
+
+        if (param.isEmpty()) {
+            return template.query(sql, rowMapper())
+        }
+
+        return template.query(sql.trimIndent(),  MapSqlParameterSource().apply {
+            addValue("itemName", itemName)
+            addValue("maxPrice", maxPrice)
+        }, rowMapper(),
+        )
     }
 
 
