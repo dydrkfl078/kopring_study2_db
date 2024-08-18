@@ -48,6 +48,8 @@ subprojects {
         // JDBC
         implementation("org.springframework.boot:spring-boot-starter-jdbc")
         implementation("org.springframework.boot:spring-boot-starter-data-jdbc")
+
+        implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
     }
 
     tasks {
