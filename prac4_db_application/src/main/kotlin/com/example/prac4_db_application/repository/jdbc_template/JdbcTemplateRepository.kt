@@ -7,6 +7,7 @@ import com.example.prac4_db_application.repository.ItemUpdateDto
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.dao.EmptyResultDataAccessException
 import org.springframework.jdbc.core.BeanPropertyRowMapper
+import org.springframework.jdbc.core.DataClassRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
@@ -20,7 +21,7 @@ import javax.sql.DataSource
 
 private val logger = KotlinLogging.logger {  }
 
-@Repository
+//@Repository
 class JdbcTemplateRepository (private val dataSource : DataSource): ItemRepository {
 
     private val template = NamedParameterJdbcTemplate(dataSource)
@@ -99,6 +100,6 @@ class JdbcTemplateRepository (private val dataSource : DataSource): ItemReposito
 
 
     private fun rowMapper(): RowMapper<Item> {
-        return BeanPropertyRowMapper<Item>()
+        return DataClassRowMapper.newInstance(Item::class.java)
     }
 }
