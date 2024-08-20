@@ -1,5 +1,6 @@
 package com.example.prac4_db_application
 
+import com.example.prac4_db_application.config.JdbcConfig
 import com.example.prac4_db_application.config.MemoryConfig
 import com.example.prac4_db_application.repository.ItemRepository
 import org.springframework.boot.autoconfigure.SpringBootApplication
@@ -9,6 +10,7 @@ import org.springframework.context.annotation.Import
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
 
+@Import(JdbcConfig::class)
 @SpringBootApplication
 class Prac4DbApplication {
 
