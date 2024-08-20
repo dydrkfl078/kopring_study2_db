@@ -6,6 +6,7 @@ import com.example.prac4_db_application.repository.ItemSearchCond
 import com.example.prac4_db_application.repository.ItemUpdateDto
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.dao.EmptyResultDataAccessException
+import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
@@ -98,14 +99,6 @@ class JdbcTemplateRepository (private val dataSource : DataSource): ItemReposito
 
 
     private fun rowMapper(): RowMapper<Item> {
-        val rowMapper: RowMapper<Item> = RowMapper { rs, _ ->
-            Item(
-                rs.getString("item_name"),
-                rs.getInt("price"),
-                rs.getInt("quantity"),
-                rs.getLong("id")
-            )
-        }
-        return rowMapper
+        return BeanPropertyRowMapper<Item>()
     }
 }
