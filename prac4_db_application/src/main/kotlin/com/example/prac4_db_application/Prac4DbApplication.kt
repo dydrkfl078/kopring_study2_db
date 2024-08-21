@@ -14,12 +14,6 @@ import org.springframework.stereotype.Component
 @SpringBootApplication
 class Prac4DbApplication {
 
-
-    @Bean
-    @Profile("local")
-    fun testDataInit(itemRepository: ItemRepository): TestDataInit {
-        return TestDataInit(itemRepository)
-    }
 }
 
 fun main(args: Array<String>) {
@@ -27,5 +21,8 @@ fun main(args: Array<String>) {
 
 }
 
-
+@Bean
+fun testDataInit(itemRepository: ItemRepository): TestDataInit {
+    return TestDataInit(itemRepository)
+}
 
