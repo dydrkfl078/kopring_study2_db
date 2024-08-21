@@ -18,10 +18,9 @@ class MemoryItemRepository : ItemRepository {
     }
 
 
-    override fun save(item: Item): Item {
+    override fun save(item: Item) {
         item.id = ++sequence
         store[item.id!!] = item
-        return item
     }
 
     override fun update(itemId: Long, updateDto: ItemUpdateDto) {

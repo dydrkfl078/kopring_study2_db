@@ -8,10 +8,7 @@ import io.kotest.matchers.shouldBe
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.test.annotation.Commit
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.transaction.annotation.Transactional
-import javax.sql.DataSource
 
 @Transactional // TestClass 에서 Transactional 의 경우 로직이 성공해도 rollback 된다.
 @SpringBootTest
@@ -24,7 +21,8 @@ class Prac4DbApplicationTests {
     @Test
     fun create() {
         // when & given
-        val item = itemRepo.save(Item("testItem", 1000, 10))
+        val item = Item("testItem", 1000, 10)
+        itemRepo.save(item)
 
         // then
         itemRepo.findById(item.id!!)!!.itemName shouldBe "testItem"
@@ -34,7 +32,8 @@ class Prac4DbApplicationTests {
     fun update(){
 
         //when
-        val item = itemRepo.save(Item("testItem", 1000, 10))
+        val item =Item("testItem", 1000, 10)
+        itemRepo.save(item)
         val editItem = ItemUpdateDto("testItem-1", 5000, 5)
 
         // given

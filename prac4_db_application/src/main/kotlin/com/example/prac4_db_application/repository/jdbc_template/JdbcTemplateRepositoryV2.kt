@@ -32,12 +32,12 @@ class JdbcTemplateRepositoryV2 (private val dataSource : DataSource): ItemReposi
         // usingColumns("item_name", "price", "quantity")
     }
 
-    override fun save(item: Item): Item {
+    override fun save(item: Item) {
         logger.info { "jdbcTemplate save!" }
         val param = BeanPropertySqlParameterSource(item)
         val key = jdbcInsert.executeAndReturnKey(param)
         item.id = key.toLong()
-        return item
+
     }
 
     override fun update(itemId: Long, updateDto: ItemUpdateDto) {

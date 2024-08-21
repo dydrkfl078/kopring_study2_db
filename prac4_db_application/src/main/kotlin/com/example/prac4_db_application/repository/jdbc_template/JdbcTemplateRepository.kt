@@ -6,17 +6,12 @@ import com.example.prac4_db_application.repository.ItemSearchCond
 import com.example.prac4_db_application.repository.ItemUpdateDto
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.dao.EmptyResultDataAccessException
-import org.springframework.jdbc.core.BeanPropertyRowMapper
 import org.springframework.jdbc.core.DataClassRowMapper
-import org.springframework.jdbc.core.JdbcTemplate
 import org.springframework.jdbc.core.RowMapper
 import org.springframework.jdbc.core.namedparam.BeanPropertySqlParameterSource
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
 import org.springframework.jdbc.support.GeneratedKeyHolder
-import org.springframework.jdbc.support.KeyHolder
-import org.springframework.stereotype.Repository
-import java.util.Objects
 import javax.sql.DataSource
 
 private val logger = KotlinLogging.logger {  }
@@ -26,15 +21,12 @@ class JdbcTemplateRepository (private val dataSource : DataSource): ItemReposito
 
     private val template = NamedParameterJdbcTemplate(dataSource)
 
-    override fun save(item: Item): Item {
+    override fun save(item: Item){
         logger.info { "jdbcTemplate save!" }
         val sql = "INSERT INTO item(item_name, price, quantity) VALUES (:itemName, :price, :quantity)"
         val keyHolder = GeneratedKeyHolder()
         val param = BeanPropertySqlParameterSource(item)
         template.update (sql, param, keyHolder )
-
-        item.id = keyHolder.key?.toLong()
-        return item
     }
 
     override fun update(itemId: Long, updateDto: ItemUpdateDto) {
