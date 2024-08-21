@@ -13,7 +13,8 @@ import org.springframework.jdbc.datasource.DriverManagerDataSource
 import org.springframework.stereotype.Component
 import javax.sql.DataSource
 
-@Import(JdbcConfig::class)
+//@Import(JdbcConfig::class)
+//@Import(MybatisConfig::class)
 @SpringBootApplication
 class Prac4DbApplication {
 
