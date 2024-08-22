@@ -18,8 +18,8 @@ class TestDataInit (private val itemRepository : ItemRepository) {
     @EventListener
     fun initDate (event: ApplicationReadyEvent) {
         logger.info { "Test data init" }
-        itemRepository.save( Item("itemA",10000,10,1))
-        itemRepository.save( Item("itemB",20000,20,2))
-        itemRepository.save( Item("itemC",30000,30,3))
+        itemRepository.save( Item("itemA",10000,10))
+        itemRepository.save( Item("itemB",20000,20))
+        itemRepository.save( Item("itemC",30000,30))
     }
 }
