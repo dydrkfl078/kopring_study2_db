@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional
 
 @Transactional // TestClass 에서 Transactional 의 경우 로직이 성공해도 rollback 된다.
 @SpringBootTest
-class Prac4DbApplicationTests {
+internal class Prac4DbApplicationTests {
 
     @Autowired
     private lateinit var itemRepo : ItemRepository
@@ -40,7 +40,7 @@ class Prac4DbApplicationTests {
         itemRepo.update(item.id!!, editItem)
 
         // then
-        itemRepo.findById(item.id!!)?.shouldBeEqual(Item("testItem-1", 5000, 5, item.id))
+        itemRepo.findById(item.id!!)?.shouldBe(Item("testItem-1", 5000, 5).apply { id = item.id })
     }
 
 }

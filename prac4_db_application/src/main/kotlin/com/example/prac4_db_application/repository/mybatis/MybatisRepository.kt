@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository
 
 private val logger = KotlinLogging.logger {  }
 
-@Repository
+//@Repository
 class MybatisRepository (private val itemMapper: ItemMapper): ItemRepository {
 
     override fun save(item: Item) {
