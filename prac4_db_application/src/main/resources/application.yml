@@ -14,3 +14,7 @@ mybatis:
   type-aliases-package: com.example.prac4_db_application.domain
   configuration:
     map-underscore-to-camel-case: true
+
+logging.level.org.hibernate :
+  SQL : DEBUG
+

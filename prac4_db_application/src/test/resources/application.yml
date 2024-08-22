@@ -10,3 +10,7 @@ mybatis:
 logging:
   level:
     .com.example.prac4_db_application.repository.mybatis: trace
+
+logging.level.org.hibernate :
+  SQL : DEBUG
+

@@ -17,6 +17,7 @@ allprojects {
 }
 
 dependencies {
+    // 웹 스타터 추가
     implementation("org.springframework.boot:spring-boot-starter-web")
 }
 
@@ -53,7 +54,10 @@ subprojects {
 
         // My Batis
         implementation("org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.3")
-        testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3")// 웹 스타터 추가
+        testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.3")
+
+        // JPA
+        implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     }
 
     tasks {
