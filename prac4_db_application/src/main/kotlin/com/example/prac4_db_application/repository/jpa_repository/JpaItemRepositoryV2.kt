@@ -7,8 +7,8 @@ import com.example.prac4_db_application.repository.ItemUpdateDto
 import org.springframework.stereotype.Repository
 import org.springframework.transaction.annotation.Transactional
 
-@Repository
-@Transactional
+//@Repository
+//@Transactional
 class JpaItemRepositoryV2 (
     private val repository : SpringDataJpaRepository
 ): ItemRepository {
