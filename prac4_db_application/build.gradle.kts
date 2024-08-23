@@ -1,5 +1,6 @@
 plugins {
     kotlin("plugin.jpa") version "1.9.24"
+    kotlin("kapt")
 }
 
 
