@@ -1,5 +1,6 @@
 package com.example.prac4_db_application.domain
 
+import com.example.prac4_db_application.repository.ItemUpdateDto
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.GeneratedValue
@@ -23,6 +24,12 @@ class Item(
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id : Long? = null
+
+    fun update(updateDto : ItemUpdateDto){
+        itemName = updateDto.itemName
+        price = updateDto.price
+        quantity = updateDto.quantity
+    }
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

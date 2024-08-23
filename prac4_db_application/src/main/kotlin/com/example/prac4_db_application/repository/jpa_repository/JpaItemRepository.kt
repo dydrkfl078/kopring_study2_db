@@ -12,9 +12,9 @@ import org.springframework.transaction.annotation.Transactional
 
 private val logger = KotlinLogging.logger {  }
 
-@Repository
-@Transactional
-class JpaRepository (
+//@Repository
+//@Transactional
+class JpaItemRepository (
     private val em : EntityManager
 ): ItemRepository {
 
