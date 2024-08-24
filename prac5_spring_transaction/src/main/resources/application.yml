@@ -1,0 +1,10 @@
+spring.application.name: prac5_spring_transaction
+
+logging.level.org:
+  hibernate:
+    resource:
+      transaction: DEBUG
+  springframework:
+    transaction.interceptor : TRACE
+    jdbc.datasource.DataSourceTransactionManager: DEBUG
+    orm.jpa.JpaTransactionManager: DEBUG
