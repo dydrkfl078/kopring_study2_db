@@ -1,0 +1,10 @@
+package kopring.prac3_1_sql.programmers.select_lv1
+
+class 조건에부합하는중고거래댓글 {
+
+    val sql =
+        "SELECT BOARD.TITLE, BOARD.BOARD_ID, REPLY.REPLY_ID, REPLY.WRITER_ID, REPLY.CONTENTS, DATE_FORMAT(REPLY.CREATED_DATE, '%Y-%m-%d')\n" +
+                "FROM USED_GOODS_BOARD AS BOARD JOIN USED_GOODS_REPLY AS REPLY ON BOARD.BOARD_ID = REPLY.BOARD_ID\n" +
+                "WHERE BOARD.CREATED_DATE BETWEEN '2022-10-01' AND '2022-10-31'\n" +
+                "ORDER BY REPLY.CREATED_DATE, BOARD.TITLE"
+}
