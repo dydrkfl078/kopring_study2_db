@@ -1,4 +1,4 @@
-package kopring.prac3_1_sql.programmers.select
+package kopring.prac3_1_sql.programmers.select_lv1
 
 class `평균 일일 대여 요금 구하기` {
 

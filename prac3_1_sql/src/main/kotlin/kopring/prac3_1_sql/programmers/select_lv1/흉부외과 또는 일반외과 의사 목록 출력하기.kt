@@ -1,4 +1,4 @@
-package kopring.prac3_1_sql.programmers.select
+package kopring.prac3_1_sql.programmers.select_lv1
 
 class `흉부외과 또는 일반외과 의사 목록 출력하기` {
 
