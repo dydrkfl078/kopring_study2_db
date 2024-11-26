@@ -12,8 +12,6 @@ allprojects {
     repositories {
         mavenCentral()
     }
-
-
 }
 
 dependencies {
@@ -58,6 +56,9 @@ subprojects {
 
         // JPA
         implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+
+        // REDIS
+        implementation("org.springframework.boot:spring-boot-starter-data-redis")
     }
 
     tasks {
